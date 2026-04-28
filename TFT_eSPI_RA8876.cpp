@@ -656,7 +656,6 @@ void TFT_eSPI_RA8876::init(uint8_t tc)
 
     INIT_TFT_DATA_BUS;
 
-
 #if defined (TFT_CS) && !defined(RP2040_PIO_INTERFACE)
   // Set to output once again in case MISO is used for CS
   if (TFT_CS >= 0) {
@@ -3686,6 +3685,15 @@ void TFT_eSPI_RA8876::drawPixel(int32_t x, int32_t y, uint32_t color)
     DC_D; tft_Write_16N(color);
   #endif
 
+// RA8876 drawPixel: the generic RP2040 path below sends CASET/PASET raw bytes
+// without the RA8876's required 0x00/0x80 SPI prefix, corrupting chip state.
+// Use setWindow (which speaks the correct RA8876 protocol) then send one pixel.
+#elif defined (RA8876_DRIVER)
+  setWindow(x, y, x, y);  // sets 1×1 active window; leaves SPI in 16-bit mode,
+                           // CS asserted, and the 0x80 data-phase prefix already sent
+  tft_Write_16S(color);    // RA8876 expects low-byte first — byte-swap on the way out
+  SPI_BUSY_CHECK; CS_H;    // close the single-pixel burst before returning
+
 // Temporary solution is to include the RP2040 optimised code here
 #elif (defined (ARDUINO_ARCH_RP2040) || defined (ARDUINO_ARCH_MBED)) && !defined (SSD1351_DRIVER)
 
@@ -3845,7 +3853,13 @@ void TFT_eSPI_RA8876::pushColor(uint16_t color)
   begin_tft_write();
 
   SPI_BUSY_CHECK;
+#if defined(RA8876_DRIVER)
+  // RA8876 SPI: chip expects low-byte first, so byte-swap before sending.
+  tft_Write_16S(color);
+#else
+  // SSD1963 parallel (and all others): PIO shifts MSB first natively — no swap needed.
   tft_Write_16N(color);
+#endif
 
   end_tft_write();
 }

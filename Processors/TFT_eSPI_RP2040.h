@@ -240,7 +240,7 @@
     #define T_CS_H digitalWrite(TOUCH_CS, HIGH)
   #endif
 #else
-  #ifdef TOUCH_CS
+  #if defined(TOUCH_CS) && (TOUCH_CS >= 0)
     #error Touch screen not supported in parallel or SPI PIO mode, use a separate library.
   #endif
 #endif

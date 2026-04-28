@@ -982,7 +982,7 @@ class TFT_eSPI_RA8876 : public Print { friend class TFT_eSprite_RA8876; // Sprit
 **                         Section 9: TFT_eSPI_RA8876 class conditional extensions
 ***************************************************************************************/
 // Load the Touch extension
-#ifdef TOUCH_CS
+#if defined(TOUCH_CS) && (TOUCH_CS >= 0)
   #if defined (TFT_PARALLEL_8_BIT) || defined (RP2040_PIO_INTERFACE)
     #if !defined(DISABLE_ALL_LIBRARY_WARNINGS)
       #error >>>>------>> Touch functions not supported in 8/16-bit parallel mode or with RP2040 PIO.

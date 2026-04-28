@@ -206,7 +206,7 @@ void pioinit(uint16_t clock_div, uint16_t fract_div) {
   #else // must be TFT_PARALLEL_16_BIT
     uint8_t bits = 16;
   #endif
-  
+
   // Load the PIO program
   program_offset = pio_add_program(tft_pio, &tft_io_program);
 
@@ -265,7 +265,8 @@ void pioinit(uint16_t clock_div, uint16_t fract_div) {
 // PIO handles pixel block fill writes
 void TFT_eSPI_RA8876::pushBlock(uint16_t color, uint32_t len)
 {
-#if  defined (SPI_18BIT_DRIVER) || (defined (SSD1963_DRIVER) && defined (TFT_PARALLEL_8_BIT))
+#if defined (SPI_18BIT_DRIVER)
+  // 18-bit colour conversion for SPI 18-bit mode only
   uint32_t col = ((color & 0xF800)<<8) | ((color & 0x07E0)<<5) | ((color & 0x001F)<<3);
   if (len) {
     WAIT_FOR_STALL;
@@ -275,6 +276,8 @@ void TFT_eSPI_RA8876::pushBlock(uint16_t color, uint32_t len)
     TX_FIFO = --len; // Decrement first as PIO sends n+1
   }
 #else
+  // SSD1963 parallel and all other drivers: send 16-bit RGB565 directly.
+  // PIO shifts MSB first, so no byte-swap is needed here.
   if (len) {
     WAIT_FOR_STALL;
     tft_pio->sm[pio_sm].instr = pio_instr_fill;
@@ -313,7 +316,8 @@ void TFT_eSPI_RA8876::pushBlock(uint16_t color, uint32_t len){
 ** Description:             Write a sequence of pixels
 ***************************************************************************************/
 void TFT_eSPI_RA8876::pushPixels(const void* data_in, uint32_t len){
-#if  defined (SPI_18BIT_DRIVER) || (defined (SSD1963_DRIVER) && defined (TFT_PARALLEL_8_BIT))
+#if defined (SPI_18BIT_DRIVER)
+  // 18-bit colour conversion for SPI 18-bit mode only
   uint16_t *data = (uint16_t*)data_in;
   if (_swapBytes) {
     while ( len-- ) {
@@ -525,10 +529,14 @@ void TFT_eSPI_RA8876::pushPixels(const void* data_in, uint32_t len){
 ** Description:             Write a block of pixels of the same colour
 ***************************************************************************************/
 void TFT_eSPI_RA8876::pushBlock(uint16_t color, uint32_t len){
+  // RA8876 expects pixel data low-byte first (little-endian SPI pixel order).
+  // pushPixels() byte-swaps when _swapBytes=false (the default) for the same reason.
+  // Match that behaviour here so fillRect/fillCircle/etc. show the correct colours.
+  uint16_t swapped = (color << 8) | (color >> 8);
   while(len--)
   {
     while (!spi_is_writable(SPI_X)){};
-    spi_get_hw(SPI_X)->dr = (uint32_t)color;
+    spi_get_hw(SPI_X)->dr = (uint32_t)swapped;
   }
 }
 

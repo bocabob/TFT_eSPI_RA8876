@@ -22,10 +22,17 @@
 //   User configuration selection lines are below    //
 ///////////////////////////////////////////////////////
 
-// Only ONE line below should be uncommented to define your setup.  Add extra lines and files as needed.
+// LCC project board configuration.
+// User_Setup_LCC_Active.h (in this library directory) is the single file to edit
+// when switching between the v2.4 (SSD1963 parallel) and v2.7 (RA8876 SPI) boards.
+// Arduino IDE does not propagate sketch-side #defines to library compilation units,
+// so the board selection must live here rather than in the sketch's ProjectConfig.h.
+#include "User_Setup_LCC_Active.h"
 
+// Original setup options left below for reference — do not uncomment these;
+// edit User_Setup_LCC_Active.h instead.
 //#include "Setup104a_RP2040_SSD1963_parallel.h"		// My Pico setup for 9" cap touch
-#include "User_Setup_RP2040_RA8876_SPI.h"          // Pico + ER-TFTM101-1 1024x600 RA8876 SPI
+//#include "User_Setup_RP2040_RA8876_SPI.h"          // Pico + ER-TFTM101-1 1024x600 RA8876 SPI
 //#include <User_Setup_Mega.h>           // My Mega setup is root library folder
 //#include <User_Setup_RPiPico.h>           // My Mega setup is root library folder
 //#include <User_Setup_ESP32.h>           // My Mega setup is root library folder

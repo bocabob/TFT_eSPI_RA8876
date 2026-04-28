@@ -23,7 +23,7 @@
 
 // These pins can be moved and are controlled directly by the library software
 #define TFT_DC   28    // Data Command control pin
-#define TFT_RST   2    // Reset pin
+#define TFT_RST  -1    // RST not connected on v2.4 board — use software reset
 
 //#define TFT_RD   -1  // Do not define, read pin permanently connected to 3V3
 
