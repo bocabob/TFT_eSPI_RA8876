@@ -382,7 +382,15 @@ static const uint16_t default_4bit_palette[] PROGMEM = {
 
 // This structure allows sketches to retrieve the user setup parameters at runtime
 // by calling getSetup(), zero impact on code size unless used, mainly for diagnostics
-typedef struct
+// Named (not anonymous) specifically so this doesn't trip newer GCC's
+// -Wnon-c-typedef-for-linkage: an anonymous struct given a name only via
+// typedef, where a member (version, below) has a default initializer,
+// isn't C-compatible under the stricter linkage rules those compilers
+// apply to typedef'd anonymous types. Giving the struct its own tag name
+// (setup_t, matching the typedef) sidesteps the warning with no behavior
+// change -- in C++ a struct's tag name is already usable as a type name
+// on its own.
+typedef struct setup_t
 {
 String  version = TFT_ESPI_VERSION;
 String  setup_info;  // Setup reference name available to use in a user setup
