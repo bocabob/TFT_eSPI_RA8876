@@ -465,6 +465,11 @@ class TFT_eSPI_RA8876 : public Print { friend class TFT_eSprite_RA8876; // Sprit
   // Sketch defined tab colour option is for ST7735 displays only
   void     init(uint8_t tc = TAB_COLOUR), begin(uint8_t tc = TAB_COLOUR);
 
+  // RA8876: false if the last init() found no panel -- the controller never reported its PLL
+  // locked or its SDRAM ready within RA8876_INIT_TIMEOUT_MS. init() then returns instead of
+  // waiting forever, so a sketch can run without its display (check this after init()).
+  bool     panelFound(void) { return _panelFound; }
+
   // These are virtual so the TFT_eSprite_RA8876 class can override them with sprite specific functions
   virtual void     drawPixel(int32_t x, int32_t y, uint32_t color),
                    drawChar(int32_t x, int32_t y, uint16_t c, uint32_t color, uint32_t bg, uint8_t size),
@@ -967,6 +972,7 @@ class TFT_eSPI_RA8876 : public Print { friend class TFT_eSprite_RA8876; // Sprit
   bool     _swapBytes; // Swap the byte order for TFT pushImage()
 
   bool     _booted;    // init() or begin() has already run once
+  bool     _panelFound = true;   // RA8876: the last init() got answers from the controller
 
                        // User sketch manages these via set/getAttribute()
   bool     _cp437;        // If set, use correct CP437 charset (default is OFF)

@@ -770,7 +770,7 @@ void TFT_eSPI_RA8876::init(uint8_t tc)
 
 #elif defined (RA8876_DRIVER)
     #include "TFT_Drivers/RA8876_Init.h"
-    Serial.println("RA8876 init sequence completed"); // force recompile + confirm execution
+    Serial.println(_panelFound ? "RA8876 init sequence completed" : "RA8876 init sequence skipped (no panel)");
 
 #endif
 

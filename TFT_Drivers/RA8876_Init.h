@@ -26,6 +26,17 @@
 
 #if defined (RA8876_DRIVER)
 
+// How long init() waits for the controller to answer before deciding there is no panel and
+// returning (panelFound() == false). It used to wait forever, which held up a sketch on a board
+// built without its display. A present panel locks its PLL in a few ms; this also leaves room
+// for one or two of the hardware-reset retries below.
+#ifndef RA8876_INIT_TIMEOUT_MS
+#define RA8876_INIT_TIMEOUT_MS  3000
+#endif
+
+  _panelFound = true;
+  uint32_t _ra8876_t0 = millis();
+
 // ============================================================
 //  Step 1  —  PLL configuration
 //
@@ -113,9 +124,17 @@
           _attempt = 0;
         }
       }
+      if (millis() - _ra8876_t0 > RA8876_INIT_TIMEOUT_MS) {
+        // No answer: no panel fitted, or it is not powered. Give up rather than wait forever.
+        _panelFound = false;
+        Serial.println("RA8876: no answer from the controller -- no panel? init skipped");
+        break;
+      }
       delay(2);
     } while (1);
   }
+
+  if (_panelFound) {   // everything below needs a controller that answers
 
   delay(1);
 
@@ -152,8 +171,15 @@
       _s = (uint8_t)spi_get_hw(SPI_X)->dr;
       SPI_BUSY_CHECK; CS_H;
       Serial.print("RA8876 SDRAM ready. Status=0x"); Serial.println(_s, HEX);
+      if ((_s & 0x04) == 0x00 && millis() - _ra8876_t0 > RA8876_INIT_TIMEOUT_MS) {
+        _panelFound = false;
+        Serial.println("RA8876: SDRAM never reported ready -- init skipped");
+        break;
+      }
     } while ((_s & 0x04) == 0x00);
   }
+
+  if (_panelFound) {   // the rest of the sequence
 
 // ============================================================
 //  Step 3  —  Core Configuration Register (CCR, reg 0x01)
@@ -373,5 +399,8 @@
     // Re-select MRWDP after the readback
     RA8876_CMD(0x04);
   }
+
+  }  // if (_panelFound): the rest of the sequence
+  }  // if (_panelFound): everything after the PLL wait
 
 #endif  // RA8876_DRIVER
