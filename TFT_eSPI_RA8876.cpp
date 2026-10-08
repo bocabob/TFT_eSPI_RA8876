@@ -3428,10 +3428,6 @@ void TFT_eSPI_RA8876::setWindow(int32_t x0, int32_t y0, int32_t x1, int32_t y1)
   DC_C; tft_Write_8(TFT_RAMWR);
   DC_D;
 #elif defined (RA8876_DRIVER)
-  { static bool _sw1 = true; if (_sw1) { _sw1=false;
-    Serial.print("setWindow: "); Serial.print(x0); Serial.print(",");
-    Serial.print(y0); Serial.print(","); Serial.print(x1); Serial.print(",");
-    Serial.println(y1); } }
   // Set active window upper-left corner
   RA8876_REG(RA8876_AWUL_X0, x0 & 0xFF);
   RA8876_REG(RA8876_AWUL_X1, (x0 >> 8) & 0x0F);

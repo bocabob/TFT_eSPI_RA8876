@@ -417,6 +417,6 @@ tft.endWrite();
 - **Rotation is mirror-only** (§4) — no true portrait.
 - **Pixel read-back is not adapted.** `readPixel`, `readRect`, `readRectRGB`, and smooth-graphics calls that omit `bg_color` rely on read paths written for MIPI controllers. Avoid them, or render in a sprite where reads come from RAM.
 - **`invertDisplay()` does nothing** on the RA8876.
-- **Diagnostics.** `init()` prints a status line to `Serial`, and the first `setWindow()` call prints its coordinates once.
+- **Diagnostics.** `init()` prints a status line to `Serial`.
 - **No-panel boot.** If nothing answers, `init()` returns after `RA8876_INIT_TIMEOUT_MS` and `panelFound()` is `false`.
 - **Other controllers.** All the original TFT_eSPI drivers (ILI9341, ST7789, ST7796, GC9A01, SSD1963, …) and processors (ESP32, ESP8266, STM32, RP2040) remain available — select a different driver in the setup file.
