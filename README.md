@@ -2,6 +2,11 @@
 
 A fork of [Bodmer's TFT_eSPI library](https://github.com/Bodmer/TFT_eSPI) modified to support the **ER-TFTM101-1** (1024×600, RA8876 SPI driver) and restructured to coexist alongside the standard TFT_eSPI library without conflict.
 
+## Documentation
+
+- [Usage guide](docs/TFT_eSPI_RA8876_Guide.md) — functions and methods, configuration, RA8876-specific notes
+- [TFT_eSPI_RA8876 vs RA8876_RP2040](docs/Library_Comparison.md) — which library to choose
+
 ## Differences from TFT_eSPI
 
 | | TFT_eSPI | TFT_eSPI_RA8876 |
