@@ -6,13 +6,18 @@
   "repository":
   {
     "type": "git",
-    "url": "https://github.com/Bodmer/TFT_eSPI"
+    "url": "https://github.com/bocabob/TFT_eSPI_RA8876"
   },
   "authors":
   [
     {
         "name": "Bodmer",
         "email": "bodmer@anola.net",
+        "maintainer": false
+    },
+    {
+        "name": "bocabob",
+        "url": "https://github.com/bocabob",
         "maintainer": true
     }
   ],
