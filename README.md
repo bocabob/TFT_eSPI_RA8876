@@ -191,3 +191,13 @@ Anti-aliased (smooth) fonts in `.vlw` format can be generated with the Processin
 ## Upstream
 
 This library is based on [TFT_eSPI v2.5.43 by Bodmer](https://github.com/Bodmer/TFT_eSPI). The RA8876 driver support and ER-TFTM101-1 setup files were added on top of that base. All class and symbol names have been prefixed/suffixed with `_RA8876` to allow side-by-side installation with the original library.
+
+---
+
+## License
+
+Under TFT_eSPI's licenses, in [license.txt](license.txt): the FreeBSD License for Bodmer's code,
+the BSD License for the Adafruit_GFX functions and MIT for Adafruit_ILI9341. This fork's changes,
+Copyright (c) 2026 Bob Gamble, are under the same FreeBSD terms. The fonts under `Fonts/` keep
+their own licenses (`Fonts/GFXFF/license.txt` for the GFX free fonts). All of it is provided as is,
+without warranty of any kind.
